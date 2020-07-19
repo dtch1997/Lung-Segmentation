@@ -4,3 +4,9 @@
 [submodule "aimutil"]
 	path = lib/aimutil
 	url = https://github.com/bbrister/aimutil/
+[submodule "lib/CTH_seg"]
+	path = lib/CTH_seg
+	url = https://github.com/bbrister/CTH_seg
+[submodule "lib/aimutil"]
+	path = lib/aimutil
+	url = https://github.com/bbrister/aimutil/
