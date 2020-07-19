@@ -1,0 +1,3 @@
+[submodule "utils/CTH_seg_inference"]
+	path = utils/CTH_seg_inference
+	url = https://github.com/bbrister/CTH_seg_inference.git
