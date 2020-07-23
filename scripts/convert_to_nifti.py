@@ -3,12 +3,14 @@ import nibabel as nb
 import numpy as np
 import argparse
 import pathlib
+import warnings
 
 from pylidc.utils import consensus
 
 parser = argparse.ArgumentParser(description="Convert LIDC images to NIFTI1 format")
 parser.add_argument('--savedir', help="Directory in which to save NIFTI1 files")
 parser.add_argument('--overwrite', help="If True, overwrites existing files. Default: False", action='store_true')
+parser.add_argument('--debug', help="If True, only converts one file for debugging purpose", action='store_true')
 
 def numpy_to_nifti(array, path):
     image = nb.Nifti1Image(array, np.eye(4))
@@ -17,9 +19,11 @@ def numpy_to_nifti(array, path):
 def main():
     args = parser.parse_args()
     path = pathlib.Path(args.savedir)
+    if args.debug:
+        path = path / 'debug'
     print(f"Using {str(path)} as save directory")
     if path.exists() and path.is_dir():
-        raise Warning(f"Directory {str(path)} already exists.")
+        warnings.warn(f"Directory {str(path)} already exists.")
         if args.overwrite:
             print("Overwrite has been set. Continuing...")
         else:
@@ -28,9 +32,12 @@ def main():
     else:
         path.mkdir(parents=True, exist_ok=True)
 
-    scans = pl.query(pl.Scan).all()
+    if args.debug:
+        scans = [pl.query(pl.Scan).first()]
+    else:
+        scans = pl.query(pl.Scan).all()
     for scan in scans:
-        print("Converting patient {scan.patient_id}")
+        print(f"Converting patient {scan.patient_id}")
         vol = scan.to_volume() # (numpy array)
         mask = np.zeros(vol.shape, dtype=bool)
         nodules = scan.cluster_annotations()
